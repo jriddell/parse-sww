@@ -51,7 +51,8 @@ class ParseSww
     parser = Nokogiri::HTML::SAX::Parser.new(swwDoc)
     parser.parse(File.read(htmlFile, mode: 'rb'))
     @riverEntries = swwDoc.riverEntries
-    puts "RESULT: #{@riverEntries}"
+    puts "RESULT:"
+    @riverEntries.each {|riverEntry| puts riverEntry.to_str}
   end
 
   def save_file
@@ -83,6 +84,9 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @parserState = ParserState::FoundRiverName
       @currentRiverEntry.name = ''
     end
+    if name == 'p' and attributes[0].include?('Pesda-Heading-4')
+      @parserState = ParserState::FoundRiverSubName
+    end
   end
 
   def characters(string)
@@ -91,18 +95,28 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX string!"
       @currentRiverEntry.name += string
     end
+    if @parserState == ParserState::FoundRiverSubName
+      return if @currentRiverEntry.nil? # it found a Pesda-Heading-4 at the chapter start
+      @currentRiverEntry.subName = string
+    end
   end
 end
 
 class RiverEntry
   attr_accessor :name
-  #@name
-  @subName
-  @contributor
-  @grade
-  @length
+  attr_accessor :subName
+  attr_accessor :contributor
+  attr_accessor :grade
+  attr_accessor :length
+
+  def to_str
+    string = "RIVER: #{name}"
+    string += "#{subName}"
+    return string
+  end
 end
 
 module ParserState
   FoundRiverName = 1
+  FoundRiverSubName = 2
 end
