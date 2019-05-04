@@ -26,6 +26,7 @@ require 'optparse'
 class ParseSww
   attr_accessor :htmlDirectory
   attr_accessor :htmlFiles
+  attr_accessor :riverEntires
 
   def initialize(htmlDirectory)
     @htmlDirectory = htmlDirectory
@@ -46,8 +47,11 @@ class ParseSww
   def parse_html_file(htmlFile)
     abort "No such file" if not File.exists?(htmlFile)
     puts "PARSING #{htmlFile}"
-    parser = Nokogiri::HTML::SAX::Parser.new(SwwDoc.new)
+    swwDoc = SwwDoc.new()
+    parser = Nokogiri::HTML::SAX::Parser.new(swwDoc)
     parser.parse(File.read(htmlFile, mode: 'rb'))
+    @riverEntries = swwDoc.riverEntries
+    puts "RESULT: #{@riverEntries}"
   end
 
   def save_file
@@ -60,8 +64,45 @@ class ParseSww
 end
 
 class SwwDoc < Nokogiri::XML::SAX::Document
+  attr_accessor :riverEntries
+  @currentRiverEntry
+  @parserState
+
+  def initialize()
+    super
+    @riverEntries = []
+  end
+
   def start_element(name, attributes = [])
     puts "found a #{name} atts #{attributes}"
+    # Start of a new river
+    if name == 'p' and attributes[0].include?('Pesda-Heading-1')
+      puts "XXX Pesda-Heading-1"
+      @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
+      @currentRiverEntry = RiverEntry.new
+      @parserState = ParserState::FoundRiverName
+      @currentRiverEntry.name = ''
+    end
+  end
+
+  def characters(string)
+    puts "#{string}"
+    if @parserState == ParserState::FoundRiverName
+      puts "XXX string!"
+      @currentRiverEntry.name += string
+    end
   end
 end
 
+class RiverEntry
+  attr_accessor :name
+  #@name
+  @subName
+  @contributor
+  @grade
+  @length
+end
+
+module ParserState
+  FoundRiverName = 1
+end
