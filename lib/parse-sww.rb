@@ -39,9 +39,11 @@ class ParseSww
   end
   
   def parse_html_files
-    @htmlFiles.each do |htmlFile|
-      parse_html_file(htmlFile)
-    end
+    # FIXME just do 1 The North for now
+    #@htmlFiles.each do |htmlFile|
+    #  parse_html_file(htmlFile)
+    #end
+    parse_html_file(@htmlFiles[4])
   end
 
   def parse_html_file(htmlFile)
@@ -52,7 +54,7 @@ class ParseSww
     parser.parse(File.read(htmlFile, mode: 'rb'))
     @riverEntries = swwDoc.riverEntries
     puts "RESULT:"
-    @riverEntries.each {|riverEntry| puts riverEntry.to_str}
+    @riverEntries[0..10].each {|riverEntry| puts riverEntry.to_str}
   end
 
   def save_file
@@ -75,10 +77,10 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   end
 
   def start_element(name, attributes = [])
-    puts "found a #{name} atts #{attributes}"
+    #puts "found a #{name} atts #{attributes}"
     # Start of a new river
     if name == 'p' and attributes[0].include?('Pesda-Heading-1')
-      puts "XXX Pesda-Heading-1"
+      #puts "XXX Pesda-Heading-1"
       @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
       @currentRiverEntry = RiverEntry.new
       @parserState = ParserState::FoundRiverName
@@ -90,9 +92,8 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   end
 
   def characters(string)
-    puts "#{string}"
+    #puts "#{string}"
     if @parserState == ParserState::FoundRiverName
-      puts "XXX string!"
       @currentRiverEntry.name += string
     end
     if @parserState == ParserState::FoundRiverSubName
