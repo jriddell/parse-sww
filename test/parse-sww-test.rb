@@ -8,6 +8,48 @@ class ParseSwwTest < MiniTest::Test
     assert_equal(["3 The East.html", "Example pages 1.html", "2 The West.html", "4 The South.html", "1 The North.html"], parseSww.htmlFiles)
   end
     
+  def test_parse_html_file_burn1
+    parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/test/data/burn1/')
+    parseSww.get_html_files()
+    assert_equal(["burn1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    puts "UUU grade #{riverEntry.grade}"
+    puts "UUU contributors #{riverEntry.contributor}"
+    assert_equal('Burn of Lunklet', riverEntry.name)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3(4-)', riverEntry.grade)
+  end
+
+  def test_parse_html_file_burn2
+    parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/test/data/burn2/')
+    parseSww.get_html_files()
+    assert_equal(["burn2.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    puts "UUU grade #{riverEntry.grade}"
+    puts "UUU contributors #{riverEntry.contributor}"
+    assert_equal('Burn of Crookadale', riverEntry.name)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3/4', riverEntry.grade)
+  end
+
+  def test_parse_html_file_section1
+    parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/test/data/section1/')
+    parseSww.get_html_files()
+    assert_equal(["section1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(3, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    puts "UUU grade #{riverEntry.grade}"
+    puts "UUU contributors #{riverEntry.contributor}"
+    assert_equal('Burn of Crookadale', riverEntry.name)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3/4', riverEntry.grade)
+  end
+
 =begin    
   # adding a release to a file with no releases
   def test_no_releases

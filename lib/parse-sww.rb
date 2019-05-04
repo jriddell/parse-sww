@@ -26,7 +26,7 @@ require 'optparse'
 class ParseSww
   attr_accessor :htmlDirectory
   attr_accessor :htmlFiles
-  attr_accessor :riverEntires
+  attr_accessor :riverEntries
 
   def initialize(htmlDirectory)
     @htmlDirectory = htmlDirectory
@@ -39,11 +39,9 @@ class ParseSww
   end
   
   def parse_html_files
-    # FIXME just do 1 The North for now
-    #@htmlFiles.each do |htmlFile|
-    #  parse_html_file(htmlFile)
-    #end
-    parse_html_file(@htmlFiles[4])
+    @htmlFiles.each do |htmlFile|
+      parse_html_file(htmlFile)
+    end
   end
 
   def parse_html_file(htmlFile)
@@ -83,22 +81,44 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       #puts "XXX Pesda-Heading-1"
       @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
       @currentRiverEntry = RiverEntry.new
-      @parserState = ParserState::FoundRiverName
+      @parserState = ParserState::RiverName
       @currentRiverEntry.name = ''
     end
     if name == 'p' and attributes[0].include?('Pesda-Heading-4')
-      @parserState = ParserState::FoundRiverSubName
+      @parserState = ParserState::RiverSubName
+    end
+    if name == 'p' and (attributes[0].include?('Pesda-Quick-Reference-contributors') or attributes[0].include?('Pesda-Quick-Reference'))
+      puts "XXX settings to quick ref state\n"
+      @parserState = ParserState::PesdaQuickReference
     end
   end
 
   def characters(string)
     #puts "#{string}"
-    if @parserState == ParserState::FoundRiverName
+    if @parserState == ParserState::RiverName
       @currentRiverEntry.name += string
     end
-    if @parserState == ParserState::FoundRiverSubName
+    if @parserState == ParserState::RiverSubName
       return if @currentRiverEntry.nil? # it found a Pesda-Heading-4 at the chapter start
       @currentRiverEntry.subName = string
+    end
+    if @parserState == ParserState::Contributors
+      @currentRiverEntry.contributor = '' if @currentRiverEntry.contributor.nil?
+      @currentRiverEntry.contributor += string
+    end
+    if @parserState == ParserState::Grade
+      @currentRiverEntry.grade = '' if @currentRiverEntry.grade.nil?
+      @currentRiverEntry.grade += string
+    end
+    if @parserState == ParserState::PesdaQuickReference
+      puts "quick ref:" + string + "<<"
+    end
+    if @parserState == ParserState::PesdaQuickReference and string.include?('Contributor')
+       puts "XXX in contributors state"
+      @parserState = ParserState::Contributors
+    end
+    if @parserState == ParserState::PesdaQuickReference and string == 'Grade'
+      @parserState = ParserState::Grade
     end
   end
 end
@@ -111,13 +131,18 @@ class RiverEntry
   attr_accessor :length
 
   def to_str
-    string = "RIVER: #{name}"
-    string += "#{subName}"
+    string = "RIVER: #{name}\n"
+    string += "Subname: #{subName}\n"
+    string += "Contributor: #{contributor}\n"
+    string += "Grade: #{grade}\n"
     return string
   end
 end
 
 module ParserState
-  FoundRiverName = 1
-  FoundRiverSubName = 2
+  RiverName = 1
+  RiverSubName = 2
+  Contributors = 3
+  Grade = 4
+  PesdaQuickReference = 5
 end
