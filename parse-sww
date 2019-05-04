@@ -21,12 +21,9 @@
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'optparse'
-require_relative 'lib/appstream-metainfo-release-update'
+require_relative 'lib/parse-sww'
 
-@date = "today"
-@releases_to_show = 0
-@dateoff = false # double negative but I can't work out a nicer way
-
+=begin
 parser = OptionParser.new do |opts|
   opts.banner = <<-EOS
 Usage: appstream-metainfo-release-update 'org.foo.metainfo.xml'
@@ -49,10 +46,8 @@ Usage: appstream-metainfo-release-update 'org.foo.metainfo.xml'
   end
 end
 parser.parse!
+=end
 
-abort parser.help if ARGV.empty?
-file_name = ARGV[0]
-
-updater = MetaInfoUpdater.new(file_name, @version, @date, @dateoff, @releases_to_show)
-updater.open_file
-updater.save_file
+swwParser = ParseSww.new('/home/jr/Documents/white-water-guidebook/SWW - web resources/')
+swwParser.get_html_files
+swwParser.parse_html_files

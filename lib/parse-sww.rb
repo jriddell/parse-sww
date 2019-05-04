@@ -31,34 +31,23 @@ class ParseSww
     @htmlDirectory = htmlDirectory
   end
 
-  def get_html_files()
-    puts "get_html_files"
+  def get_html_files
     Dir.chdir(@htmlDirectory)
     @htmlFiles = Dir.glob('*.html')
     puts "#{@htmlFiles}"
   end
   
-  
-  
-  def open_file
-    abort "No such file" if not File.exists?(@filename)
-    @doc = File.open(@filename) { |f| Nokogiri::XML(f, &:noblanks) }
-    component = @doc.at_css("component")
-    releases = @doc.at_css("releases")
-    if releases and @date_off
-      releases.add_child("<release version='#{@version}'/>")
-    elsif not releases and @date_off
-      component.add_child("<releases><release version='#{@version}'/></releases>")
-    elsif releases and not @date_off
-      releases.add_child("<release version='#{@version}' date='#{date}'/>")
-    else
-      component.add_child("<releases><release version='#{@version}' date='#{date}'/></releases>")
+  def parse_html_files
+    @htmlFiles.each do |htmlFile|
+      parse_html_file(htmlFile)
     end
-    if releases and @releases_to_show > 0
-      if releases.children.length > @releases_to_show
-        releases.children = releases.children[-@releases_to_show,@releases_to_show]
-      end
-    end
+  end
+
+  def parse_html_file(htmlFile)
+    abort "No such file" if not File.exists?(htmlFile)
+    puts "PARSING #{htmlFile}"
+    parser = Nokogiri::HTML::SAX::Parser.new(SwwDoc.new)
+    parser.parse(File.read(htmlFile, mode: 'rb'))
   end
 
   def save_file
@@ -69,3 +58,10 @@ class ParseSww
      f.close
   end
 end
+
+class SwwDoc < Nokogiri::XML::SAX::Document
+  def start_element(name, attributes = [])
+    puts "found a #{name} atts #{attributes}"
+  end
+end
+
