@@ -5,11 +5,11 @@ class ParseSwwTest < MiniTest::Test
   def test_get_html_files
     parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/SWW - web resources/')
     parseSww.get_html_files()
-    assert_equal(["3 The East.html", "Example pages 1.html", "2 The West.html", "4 The South.html", "1 The North.html"], parseSww.htmlFiles)
+    assert_equal(["2 The West.html", "4 The South.html", "3 The East.html", "Example pages 1.html", "1 The North.html"], parseSww.htmlFiles)
   end
     
   def test_parse_html_file_burn1
-    parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/test/data/burn1/')
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/burn1/')
     parseSww.get_html_files()
     assert_equal(["burn1.html"], parseSww.htmlFiles)
     parseSww.parse_html_files()
@@ -23,7 +23,7 @@ class ParseSwwTest < MiniTest::Test
   end
 
   def test_parse_html_file_burn2
-    parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/test/data/burn2/')
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/burn2/')
     parseSww.get_html_files()
     assert_equal(["burn2.html"], parseSww.htmlFiles)
     parseSww.parse_html_files()
@@ -37,7 +37,7 @@ class ParseSwwTest < MiniTest::Test
   end
 
   def test_parse_html_file_section1
-    parseSww = ParseSww.new('/home/jr/Documents/white-water-guidebook/test/data/section1/')
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/section1/')
     parseSww.get_html_files()
     assert_equal(["section1.html"], parseSww.htmlFiles)
     parseSww.parse_html_files()
