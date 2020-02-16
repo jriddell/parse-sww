@@ -10,6 +10,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal(["2 The West.html", "4 The South.html", "3 The East.html", "Example pages 1.html", "1 The North.html"], parseSww.htmlFiles)
   end
     
+  # a river section
   def test_parse_html_file_burn1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/burn1/')
     parseSww.get_html_files()
@@ -31,6 +32,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal("Access\n\nDrive north from Lerwic", riverEntry.riverEntryText[0..30])
   end
 
+  # another river section
   def test_parse_html_file_burn2
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/burn2/')
     parseSww.get_html_files()
@@ -52,6 +54,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal("Access\n\nFrom the A970 driving n", riverEntry.riverEntryText[0..30])
   end
 
+  # multiple sections in 1 document
   def test_parse_html_file_multirivers1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/multirivers1/')
     parseSww.get_html_files()
@@ -72,6 +75,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('2/3(5)', riverEntry.grade)
   end
 
+  # This has multiple sections including a river with two entries
   def test_parse_html_file_section1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/section1/')
     parseSww.get_html_files()
@@ -93,5 +97,19 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Glen Brora', riverEntry.subName)
     assert_equal('Richard Bannister, Dave Russell and Vincent Baker', riverEntry.contributor)
     assert_equal('4+', riverEntry.grade)
+  end
+
+  # Testing the document from the opening <html> and stuff
+  def test_parse_html_file_docstart1
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/docstart1/')
+    parseSww.get_html_files()
+    assert_equal(["docstart1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Burn of Lunklet', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3(4-)', riverEntry.grade)
   end
 end

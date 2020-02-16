@@ -52,7 +52,7 @@ class ParseSww
     parser.parse(File.read(htmlFile, mode: 'rb'))
     @riverEntries = swwDoc.riverEntries
     puts "RESULT:"
-    @riverEntries[0..10].each {|riverEntry| puts riverEntry.to_str}
+    @riverEntries.each {|riverEntry| puts riverEntry.to_str}
   end
 
   def save_file
@@ -81,7 +81,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX Pesda-Heading-1"
       @parserState = ParserState::RiverName
     end
-    if name == 'p' and attributes[0].include?('Pesda-Heading-4')
+    if name == 'p' and attributes[0].include?('Pesda-Heading-4') and not @currentRiverEntry.nil?
       @parserState = ParserState::RiverSubName
     end
     if name == 'p' and attributes[0].include?('Pesda-Quick-Reference')
@@ -222,7 +222,7 @@ class RiverEntry
     string += "length: #{length}\n"
     string += "start: #{startGridRef} #{startLongitude} #{startLatitude}\n"
     string += "finish: #{finishGridRef} #{finishLongitude} #{finishLatitude}\n"
-    string += "riverEntryText: #{riverEntryText}\n"
+    string += "riverEntryText: #{riverEntryText[0..30]}…\n\n"
     return string
   end
 end

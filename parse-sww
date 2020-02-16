@@ -48,6 +48,7 @@ end
 parser.parse!
 =end
 
-swwParser = ParseSww.new('/home/jr/Documents/white-water-guidebook/SWW - web resources/')
+#swwParser = ParseSww.new('/home/jr/src/parse-sww/SWW - web resources/')
+swwParser = ParseSww.new('/home/jr/src/parse-sww/simple/')
 swwParser.get_html_files
 swwParser.parse_html_files
