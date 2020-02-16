@@ -84,9 +84,13 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if name == 'p' and attributes[0].include?('Pesda-Heading-4')
       @parserState = ParserState::RiverSubName
     end
-    if name == 'p' and (attributes[0].include?('Pesda-Quick-Reference-contributors') or attributes[0].include?('Pesda-Quick-Reference'))
+    if name == 'p' and attributes[0].include?('Pesda-Quick-Reference')
       puts "XXX settings to quick ref state\n"
       @parserState = ParserState::PesdaQuickReference
+    end
+    if name == 'p' and attributes[0].include?('Pesda-Quick-Reference-contributors')
+      puts "XXX settings to quick ref contributors\n"
+      @parserState = ParserState::PesdaQuickReferenceContributors unless @parserState == ParserState::Contributors
     end
     if name == 'p' and attributes[0].include?('Pesda-Heading-3')
       @parserState = ParserState::RiverEntryText
@@ -120,7 +124,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     end
     if @parserState == ParserState::Contributors
       @currentRiverEntry.contributor = '' if @currentRiverEntry.contributor.nil?
+      if @currentRiverEntry.contributor.length > 0 and not @currentRiverEntry.contributor.end_with?(' ')
+        @currentRiverEntry.contributor += ' '
+      end
       @currentRiverEntry.contributor += string.strip
+      @currentRiverEntry.contributor.strip!
     end
     if @parserState == ParserState::Grade
       @currentRiverEntry.grade = '' if @currentRiverEntry.grade.nil?
@@ -161,7 +169,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::PesdaQuickReference
       #puts "quick ref:" + string + "<<"
     end
-    if @parserState == ParserState::PesdaQuickReference and string.include?('Contributor')
+    if @parserState == ParserState::PesdaQuickReferenceContributors and string.include?('Contributor')
        #puts "XXX in contributors state"
       @parserState = ParserState::Contributors
     end
@@ -226,4 +234,5 @@ module ParserState
   Start = 7
   Finish = 8
   RiverEntryText = 9
+  PesdaQuickReferenceContributors = 10
 end

@@ -60,7 +60,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal(3, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
     assert_equal('Helmsdale', riverEntry.name)
-    #assert_equal('John Ross, Gary Smith, Colin Matheson and Ron Cameron', riverEntry.contributor)
+    assert_equal('John Ross, Gary Smith, Colin Matheson and Ron Cameron', riverEntry.contributor)
     #assert_equal('3/4(4+)', riverEntry.grade)
     #riverEntry = parseSww.riverEntries[1]
     #assert_equal('Kilphedir Burn', riverEntry.name)
