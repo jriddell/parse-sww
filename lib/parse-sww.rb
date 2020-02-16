@@ -102,7 +102,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::RiverName
       puts "STRING: " + string + "<<<"
       sectionNumberRegEx = /\d\d\d/
-      riverNameRegEx = /\w[\w ]+\w/
+      riverNameRegEx = /\w[’\w ]+\w/
       if sectionNumberRegEx.match?(string)
         # New section number means new river
         puts "QQQmatched a section number on #{string}"
@@ -119,8 +119,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       end
     end
     if @parserState == ParserState::RiverSubName
-      return if @currentRiverEntry.nil? # it found a Pesda-Heading-4 at the chapter start
-      @currentRiverEntry.subName = string
+      @currentRiverEntry.subName = '' if @currentRiverEntry.subName.nil?
+      subName = string.strip
+      subName.sub!('(', '')
+      subName.sub!(')', '')
+      @currentRiverEntry.subName += subName
     end
     if @parserState == ParserState::Contributors
       @currentRiverEntry.contributor = '' if @currentRiverEntry.contributor.nil?

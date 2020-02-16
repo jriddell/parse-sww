@@ -92,6 +92,6 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Allt a’ Mhuilin', riverEntry.name)
     assert_equal('Glen Brora', riverEntry.subName)
     assert_equal('Richard Bannister, Dave Russell and Vincent Baker', riverEntry.contributor)
-    assert_equal('4', riverEntry.grade)
+    assert_equal('4+', riverEntry.grade)
   end
 end
