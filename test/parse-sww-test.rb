@@ -52,7 +52,6 @@ class ParseSwwTest < MiniTest::Test
     assert_equal("Access\n\nFrom the A970 driving n", riverEntry.riverEntryText[0..30])
   end
 
-=begin
   def test_parse_html_file_multirivers1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/multirivers1/')
     parseSww.get_html_files()
@@ -61,14 +60,15 @@ class ParseSwwTest < MiniTest::Test
     assert_equal(3, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
     assert_equal('Helmsdale', riverEntry.name)
-    assert_equal('John Ross, Gary Smith, Colin Matheson and Ron Cameron', riverEntry.contributor)
-    assert_equal('3/4(4+)', riverEntry.grade)
-    riverEntry = parseSww.riverEntries[1]
-    assert_equal('Kilphedir Burn', riverEntry.name)
-    assert_equal('Colin Matheson', riverEntry.contributor)
-    assert_equal('4(5)', riverEntry.grade)
+    #assert_equal('John Ross, Gary Smith, Colin Matheson and Ron Cameron', riverEntry.contributor)
+    #assert_equal('3/4(4+)', riverEntry.grade)
+    #riverEntry = parseSww.riverEntries[1]
+    #assert_equal('Kilphedir Burn', riverEntry.name)
+    #assert_equal('Colin Matheson', riverEntry.contributor)
+    #assert_equal('4(5)', riverEntry.grade)
   end
 
+=begin
   def test_parse_html_file_section1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/section1/')
     parseSww.get_html_files()
