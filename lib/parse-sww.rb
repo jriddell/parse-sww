@@ -75,14 +75,13 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   end
 
   def start_element(name, attributes = [])
-    #puts "found a #{name} atts #{attributes}"
+    puts "found a #{name} atts #{attributes}"
     # Start of a new river
     if name == 'p' and attributes[0].include?('Pesda-Heading-1')
       #puts "XXX Pesda-Heading-1"
       @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
       @currentRiverEntry = RiverEntry.new
       @parserState = ParserState::RiverName
-      @currentRiverEntry.name = ''
     end
     if name == 'p' and attributes[0].include?('Pesda-Heading-4')
       @parserState = ParserState::RiverSubName
@@ -96,7 +95,17 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   def characters(string)
     #puts "#{string}"
     if @parserState == ParserState::RiverName
-      @currentRiverEntry.name += string
+      puts "STRING: " + string + "<<<"
+      sectionNumber= /\d\d\d/.match(string)
+      if not sectionNumber.nil?
+        @currentRiverEntry.sectionNumber = sectionNumber.to_s
+      else
+        riverName = /\w[\w ]+\w/.match(string)
+        if @currentRiverEntry.name.nil?
+          puts "YYY ZZZ settings name to #{riverName.to_s}"
+          @currentRiverEntry.name = riverName.to_s
+        end
+      end
     end
     if @parserState == ParserState::RiverSubName
       return if @currentRiverEntry.nil? # it found a Pesda-Heading-4 at the chapter start
@@ -124,6 +133,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
 end
 
 class RiverEntry
+  attr_accessor :sectionNumber
   attr_accessor :name
   attr_accessor :subName
   attr_accessor :contributor
@@ -131,7 +141,7 @@ class RiverEntry
   attr_accessor :length
 
   def to_str
-    string = "RIVER: #{name}\n"
+    string = "RIVER: #{sectionNumber} #{name}\n"
     string += "Subname: #{subName}\n"
     string += "Contributor: #{contributor}\n"
     string += "Grade: #{grade}\n"
