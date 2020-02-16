@@ -125,6 +125,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @currentRiverEntry.grade = '' if @currentRiverEntry.grade.nil?
       @currentRiverEntry.grade += string.strip
     end
+    if @parserState == ParserState::Length
+      @currentRiverEntry.length = '' if @currentRiverEntry.length.nil?
+      @currentRiverEntry.length += string.strip
+      puts "Adding to Length >#{string.strip}< parserState: #{@parserState}"
+    end
     if @parserState == ParserState::PesdaQuickReference
       puts "quick ref:" + string + "<<"
     end
@@ -133,7 +138,16 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @parserState = ParserState::Contributors
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Grade'
+      puts "state now grade"
       @parserState = ParserState::Grade
+    end
+    if @parserState == ParserState::PesdaQuickReference and string == 'Length'
+      puts "state now length UUUU"
+      @parserState = ParserState::Length
+    end
+    if @parserState == ParserState::PesdaQuickReference and string == 'Start'
+      puts "state now start"
+      @parserState = ParserState::Start
     end
   end
 end
@@ -145,12 +159,23 @@ class RiverEntry
   attr_accessor :contributor
   attr_accessor :grade
   attr_accessor :length
+  attr_accessor :startGridRef
+  attr_accessor :startLongitude
+  attr_accessor :startLatitude
+  attr_accessor :finishGridRef
+  attr_accessor :finishLongitude
+  attr_accessor :finishLatitude
+  attr_accessor :text
 
   def to_str
     string = "RIVER: #{sectionNumber} #{name}\n"
     string += "Subname: #{subName}\n"
     string += "Contributor: #{contributor}\n"
     string += "Grade: #{grade}\n"
+    string += "length: #{length}\n"
+    string += "start: #{startGridRef} #{startLongitude} #{startLatitude}\n"
+    string += "stop: #{finishGridRef} #{finishLongitude} #{finishLatitude}\n"
+    string += "stop: #{text}\n"
     return string
   end
 end
@@ -161,4 +186,6 @@ module ParserState
   Contributors = 3
   Grade = 4
   PesdaQuickReference = 5
+  Length = 6
+  Start = 7
 end

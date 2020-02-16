@@ -21,12 +21,12 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3(4-)', riverEntry.grade)
     assert_equal('1km', riverEntry.length)
-    assert_equal('HU 373 573', riverEntry.startGridref)
+    assert_equal('HU 373 573', riverEntry.startGridRef)
     assert_equal('60.2984', riverEntry.startLongitude)
     assert_equal('-1.3271', riverEntry.startLatitude)
-    assert_equal('HU 367 576', riverEntry.endGridref)
-    assert_equal('60.3005', riverEntry.endLongitude)
-    assert_equal('-1.3385', riverEntry.endLatitude)
+    assert_equal('HU 367 576', riverEntry.finishGridRef)
+    assert_equal('60.3005', riverEntry.finishLongitude)
+    assert_equal('-1.3385', riverEntry.finishLatitude)
     assert(riverEntry.text.starts_with('Access\nDrive north from Lerwick up the A970'))
   end
 
@@ -41,12 +41,12 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3/4', riverEntry.grade)
     assert_equal('200m', riverEntry.length)
-    assert_equal('HU 437 538', riverEntry.startGridref)
+    assert_equal('HU 437 538', riverEntry.startGridRef)
     assert_equal('60.2664', riverEntry.startLongitude)
     assert_equal('-1.2119', riverEntry.startLatitude)
-    assert_equal('HU 437 538', riverEntry.endGridref)
-    assert_equal('60.2664', riverEntry.endLongitude)
-    assert_equal('-1.2119', riverEntry.endLatitude)
+    assert_equal('HU 437 538', riverEntry.finishGridRef)
+    assert_equal('60.2664', riverEntry.finishLongitude)
+    assert_equal('-1.2119', riverEntry.finishLatitude)
     assert(riverEntry.text.starts_with('Access\nFrom the A970 driving north, take the'))
   end
 
