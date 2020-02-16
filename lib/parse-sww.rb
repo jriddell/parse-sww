@@ -91,6 +91,9 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX settings to quick ref state\n"
       @parserState = ParserState::PesdaQuickReference
     end
+    if name == 'p' and attributes[0].include?('Pesda-Heading-3')
+      @parserState = ParserState::RiverEntryText
+    end
   end
 
   def characters(string)
@@ -180,6 +183,10 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       #puts "state now finish"
       @parserState = ParserState::Finish
     end
+    if @parserState == ParserState::RiverEntryText
+      @currentRiverEntry.riverEntryText = '' if @currentRiverEntry.riverEntryText.nil?
+      @currentRiverEntry.riverEntryText += string.strip + "\n"
+    end
   end
 end
 
@@ -196,7 +203,7 @@ class RiverEntry
   attr_accessor :finishGridRef
   attr_accessor :finishLongitude
   attr_accessor :finishLatitude
-  attr_accessor :text
+  attr_accessor :riverEntryText
 
   def to_str
     string = "RIVER: #{sectionNumber} #{name}\n"
@@ -206,7 +213,7 @@ class RiverEntry
     string += "length: #{length}\n"
     string += "start: #{startGridRef} #{startLongitude} #{startLatitude}\n"
     string += "finish: #{finishGridRef} #{finishLongitude} #{finishLatitude}\n"
-    string += "text: #{text}\n"
+    string += "riverEntryText: #{riverEntryText}\n"
     return string
   end
 end
@@ -220,4 +227,5 @@ module ParserState
   Length = 6
   Start = 7
   Finish = 8
+  RiverEntryText = 9
 end
