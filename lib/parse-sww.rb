@@ -128,7 +128,20 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::Length
       @currentRiverEntry.length = '' if @currentRiverEntry.length.nil?
       @currentRiverEntry.length += string.strip
-      puts "Adding to Length >#{string.strip}< parserState: #{@parserState}"
+    end
+    if @parserState == ParserState::Start
+      @currentRiverEntry.startGridRef = '' if @currentRiverEntry.startGridRef.nil?
+      gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
+      longLatRegEx = /\d\d\.\d\d\d\d, -?\d\.\d\d\d\d/ # "60.2984, -1.3271"
+      startLocation = string.strip # hopefully something like "HU 373 573 (60.2984, -1.3271)"
+      if gridRefRegEx.match?(startLocation)
+        @currentRiverEntry.startGridRef = gridRefRegEx.match(startLocation).to_s
+      end
+      if longLatRegEx.match?(startLocation)
+        longLat = longLatRegEx.match(startLocation).to_s
+        @currentRiverEntry.startLongitude = longLat.split[0].sub(',','')
+        @currentRiverEntry.startLatitude = longLat.split[1]
+      end
     end
     if @parserState == ParserState::PesdaQuickReference
       puts "quick ref:" + string + "<<"
@@ -142,11 +155,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @parserState = ParserState::Grade
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Length'
-      puts "state now length UUUU"
+      puts "state now length"
       @parserState = ParserState::Length
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Start'
-      puts "state now start"
+      puts "state now start UUUU"
       @parserState = ParserState::Start
     end
   end
