@@ -20,6 +20,14 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Burn of Lunklet', riverEntry.name)
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3(4-)', riverEntry.grade)
+    assert_equal('1km', riverEntry.length)
+    assert_equal('HU 373 573', riverEntry.startGridref)
+    assert_equal('60.2984', riverEntry.startLongitude)
+    assert_equal('-1.3271', riverEntry.startLatitude)
+    assert_equal('HU 367 576', riverEntry.endGridref)
+    assert_equal('60.3005', riverEntry.endLongitude)
+    assert_equal('-1.3385', riverEntry.endLatitude)
+    assert(riverEntry.text.starts_with('Access\nDrive north from Lerwick up the A970'))
   end
 
   def test_parse_html_file_burn2
@@ -32,8 +40,17 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Burn of Crookadale', riverEntry.name)
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3/4', riverEntry.grade)
+    assert_equal('200m', riverEntry.length)
+    assert_equal('HU 437 538', riverEntry.startGridref)
+    assert_equal('60.2664', riverEntry.startLongitude)
+    assert_equal('-1.2119', riverEntry.startLatitude)
+    assert_equal('HU 437 538', riverEntry.endGridref)
+    assert_equal('60.2664', riverEntry.endLongitude)
+    assert_equal('-1.2119', riverEntry.endLatitude)
+    assert(riverEntry.text.starts_with('Access\nFrom the A970 driving north, take the'))
   end
 
+=begin
   def test_parse_html_file_multirivers1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/multirivers1/')
     parseSww.get_html_files()
@@ -50,7 +67,6 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('4(5)', riverEntry.grade)
   end
 
-=begin
   def test_parse_html_file_section1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/section1/')
     parseSww.get_html_files()
