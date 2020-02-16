@@ -72,19 +72,26 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('2/3(5)', riverEntry.grade)
   end
 
-=begin
   def test_parse_html_file_section1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/section1/')
     parseSww.get_html_files()
     assert_equal(["section1.html"], parseSww.htmlFiles)
     parseSww.parse_html_files()
-    assert_equal(3, parseSww.riverEntries.length)
+    assert_equal(4, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
-    puts "UUU grade #{riverEntry.grade}"
-    puts "UUU contributors #{riverEntry.contributor}"
-    assert_equal('Burn of Crookadale', riverEntry.name)
-    assert_equal('Chris Curry', riverEntry.contributor)
-    assert_equal('3/4', riverEntry.grade)
+    assert_equal('Brora', riverEntry.name)
+    assert_equal('Upper', riverEntry.subName)
+    assert_equal('John Ross and Gary Smith', riverEntry.contributor)
+    assert_equal('2', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('Brora', riverEntry.name)
+    assert_equal('Lower', riverEntry.subName)
+    assert_equal('John Ross and Gary Smith', riverEntry.contributor)
+    assert_equal('2', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[2]
+    assert_equal('Allt a’ Mhuilin', riverEntry.name)
+    assert_equal('Glen Brora', riverEntry.subName)
+    assert_equal('Richard Bannister, Dave Russell and Vincent Baker', riverEntry.contributor)
+    assert_equal('4', riverEntry.grade)
   end
-=end
 end
