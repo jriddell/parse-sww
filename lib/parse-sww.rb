@@ -143,24 +143,42 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         @currentRiverEntry.startLatitude = longLat.split[1]
       end
     end
+    if @parserState == ParserState::Finish
+      @currentRiverEntry.finishGridRef = '' if @currentRiverEntry.finishGridRef.nil?
+      gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
+      longLatRegEx = /\d\d\.\d\d\d\d, -?\d\.\d\d\d\d/ # "60.2984, -1.3271"
+      finishLocation = string.strip # hopefully something like "HU 373 573 (60.2984, -1.3271)"
+      if gridRefRegEx.match?(finishLocation)
+        @currentRiverEntry.finishGridRef = gridRefRegEx.match(finishLocation).to_s
+      end
+      if longLatRegEx.match?(finishLocation)
+        longLat = longLatRegEx.match(finishLocation).to_s
+        @currentRiverEntry.finishLongitude = longLat.split[0].sub(',','')
+        @currentRiverEntry.finishLatitude = longLat.split[1]
+      end
+    end
     if @parserState == ParserState::PesdaQuickReference
-      puts "quick ref:" + string + "<<"
+      #puts "quick ref:" + string + "<<"
     end
     if @parserState == ParserState::PesdaQuickReference and string.include?('Contributor')
-       puts "XXX in contributors state"
+       #puts "XXX in contributors state"
       @parserState = ParserState::Contributors
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Grade'
-      puts "state now grade"
+      #puts "state now grade"
       @parserState = ParserState::Grade
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Length'
-      puts "state now length"
+      #puts "state now length"
       @parserState = ParserState::Length
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Start'
-      puts "state now start UUUU"
+      #puts "state now start"
       @parserState = ParserState::Start
+    end
+    if @parserState == ParserState::PesdaQuickReference and string == 'Finish'
+      #puts "state now finish"
+      @parserState = ParserState::Finish
     end
   end
 end
@@ -187,8 +205,8 @@ class RiverEntry
     string += "Grade: #{grade}\n"
     string += "length: #{length}\n"
     string += "start: #{startGridRef} #{startLongitude} #{startLatitude}\n"
-    string += "stop: #{finishGridRef} #{finishLongitude} #{finishLatitude}\n"
-    string += "stop: #{text}\n"
+    string += "finish: #{finishGridRef} #{finishLongitude} #{finishLatitude}\n"
+    string += "text: #{text}\n"
     return string
   end
 end
@@ -201,4 +219,5 @@ module ParserState
   PesdaQuickReference = 5
   Length = 6
   Start = 7
+  Finish = 8
 end
