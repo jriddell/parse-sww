@@ -17,11 +17,9 @@ class ParseSwwTest < MiniTest::Test
     parseSww.parse_html_files()
     assert_equal(1, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
-    puts "UUU grade #{riverEntry.grade}"
-    puts "UUU contributors #{riverEntry.contributor}"
     assert_equal('Burn of Lunklet', riverEntry.name)
-    #assert_equal('Chris Curry', riverEntry.contributor)
-    #assert_equal('3(4-)', riverEntry.grade)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3(4-)', riverEntry.grade)
   end
 
   def test_parse_html_file_burn2
@@ -31,11 +29,9 @@ class ParseSwwTest < MiniTest::Test
     parseSww.parse_html_files()
     assert_equal(1, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
-    puts "UUU grade #{riverEntry.grade}"
-    puts "UUU contributors #{riverEntry.contributor}"
     assert_equal('Burn of Crookadale', riverEntry.name)
-    #assert_equal('Chris Curry', riverEntry.contributor)
-    #assert_equal('3/4', riverEntry.grade)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3/4', riverEntry.grade)
   end
 
 =begin

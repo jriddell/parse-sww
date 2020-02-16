@@ -78,9 +78,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     puts "found a #{name} atts #{attributes}"
     # Start of a new river
     if name == 'p' and attributes[0].include?('Pesda-Heading-1')
-      #puts "XXX Pesda-Heading-1"
-      @currentRiverEntry = RiverEntry.new
-      @parserState = ParserState::RiverName
+      puts "XXX Pesda-Heading-1"
+      if @currentRiverEntry.nil?
+        @currentRiverEntry = RiverEntry.new
+        @parserState = ParserState::RiverName
+      end
     end
     if name == 'p' and attributes[0].include?('Pesda-Heading-4')
       @parserState = ParserState::RiverSubName
@@ -98,6 +100,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       sectionNumberRegEx = /\d\d\d/
       riverNameRegEx = /\w[\w ]+\w/
       if sectionNumberRegEx.match?(string)
+        # New section number means new river
         puts "QQQmatched a section number on #{string}"
         @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
         sectionNumber = sectionNumberRegEx.match(string)
@@ -116,11 +119,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     end
     if @parserState == ParserState::Contributors
       @currentRiverEntry.contributor = '' if @currentRiverEntry.contributor.nil?
-      @currentRiverEntry.contributor += string
+      @currentRiverEntry.contributor += string.strip
     end
     if @parserState == ParserState::Grade
       @currentRiverEntry.grade = '' if @currentRiverEntry.grade.nil?
-      @currentRiverEntry.grade += string
+      @currentRiverEntry.grade += string.strip
     end
     if @parserState == ParserState::PesdaQuickReference
       puts "quick ref:" + string + "<<"
