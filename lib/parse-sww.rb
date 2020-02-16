@@ -79,7 +79,6 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     # Start of a new river
     if name == 'p' and attributes[0].include?('Pesda-Heading-1')
       #puts "XXX Pesda-Heading-1"
-      @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
       @currentRiverEntry = RiverEntry.new
       @parserState = ParserState::RiverName
     end
@@ -96,11 +95,15 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     #puts "#{string}"
     if @parserState == ParserState::RiverName
       puts "STRING: " + string + "<<<"
-      sectionNumber= /\d\d\d/.match(string)
-      if not sectionNumber.nil?
+      sectionNumberRegEx = /\d\d\d/
+      riverNameRegEx = /\w[\w ]+\w/
+      if sectionNumberRegEx.match?(string)
+        puts "QQQmatched a section number on #{string}"
+        @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
+        sectionNumber = sectionNumberRegEx.match(string)
         @currentRiverEntry.sectionNumber = sectionNumber.to_s
-      else
-        riverName = /\w[\w ]+\w/.match(string)
+      elsif riverNameRegEx.match?(string)
+        riverName = riverNameRegEx.match(string)
         if @currentRiverEntry.name.nil?
           puts "YYY ZZZ settings name to #{riverName.to_s}"
           @currentRiverEntry.name = riverName.to_s
