@@ -112,4 +112,39 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3(4-)', riverEntry.grade)
   end
+
+  # Broke it cos no header 3 and name had a dash in it
+  def test_parse_html_file_break1
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/break1/')
+    parseSww.get_html_files()
+    assert_equal(["break1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(2, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Elchaig', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Richard Bannister', riverEntry.contributor)
+    assert_equal('2/3 (4+)', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('An Leth-allt', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Richard Bannister', riverEntry.contributor)
+    assert_equal('5?', riverEntry.grade)
+  end
+
+=begin
+  # Testing the document from the opening <html> and stuff
+  def test_parse_html_file_full1
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/full1/')
+    parseSww.get_html_files()
+    assert_equal(["full1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Burn of Lunklet', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3(4-)', riverEntry.grade)
+  end
+=end
 end

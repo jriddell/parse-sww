@@ -92,8 +92,10 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX settings to quick ref contributors\n"
       @parserState = ParserState::PesdaQuickReferenceContributors unless @parserState == ParserState::Contributors
     end
-    if name == 'p' and attributes[0].include?('Pesda-Heading-3')
-      @parserState = ParserState::RiverEntryText
+    if name == 'p' and (attributes[0].include?('Pesda-Heading-3') or attributes[0].include?('Pesda-Text-No-Indent'))
+      if not @currentRiverEntry.nil? and not @currentRiverEntry.name.nil?
+        @parserState = ParserState::RiverEntryText
+      end
     end
   end
 
@@ -102,7 +104,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::RiverName
       puts "STRING: " + string + "<<<"
       sectionNumberRegEx = /\d\d\d/
-      riverNameRegEx = /\w[’\w ]+\w/
+      riverNameRegEx = /\w[-’\w ]+\w/
       if sectionNumberRegEx.match?(string)
         # New section number means new river
         puts "QQQmatched a section number on #{string}"
