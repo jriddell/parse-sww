@@ -22,6 +22,7 @@
 
 require 'nokogiri'
 require 'optparse'
+require 'json'
 
 class ParseSww
   attr_accessor :htmlDirectory
@@ -30,6 +31,7 @@ class ParseSww
 
   def initialize(htmlDirectory)
     @htmlDirectory = htmlDirectory
+    @riverEntries = []
   end
 
   def get_html_files
@@ -40,7 +42,7 @@ class ParseSww
   
   def parse_html_files
     @htmlFiles.each do |htmlFile|
-      parse_html_file(htmlFile)
+      @riverEntries = @riverEntries + parse_html_file(htmlFile)
     end
   end
 
@@ -50,9 +52,13 @@ class ParseSww
     swwDoc = SwwDoc.new()
     parser = Nokogiri::HTML::SAX::Parser.new(swwDoc)
     parser.parse(File.read(htmlFile, mode: 'rb'))
-    @riverEntries = swwDoc.riverEntries
-    puts "RESULT:"
-    @riverEntries.each {|riverEntry| puts riverEntry.to_str}
+    swwDoc.riverEntries
+  end
+
+  def json
+    json = []
+    @riverEntries.each {|riverEntry| json << riverEntry.to_h}
+    JSON.pretty_generate(json)
   end
 
   def save_file
@@ -237,6 +243,23 @@ class RiverEntry
     string += "finish: #{finishGridRef} #{finishLongitude} #{finishLatitude}\n"
     string += "riverEntryText: #{riverEntryText[0..30]}…\n\n"
     return string
+  end
+
+  def to_h
+    {sectionNumber: sectionNumber,
+     name: name,
+     subName: subName,
+     contributor: contributor,
+     grade: grade,
+     length: length,
+     startGridRef: startGridRef,
+     startLongitude: startLongitude,
+     startLatitude: startLatitude,
+     finishGridRef: finishGridRef,
+     finishLongitude: finishLongitude,
+     finishLatitude: finishLatitude,
+     riverEntryText: riverEntryText
+    }
   end
 end
 
