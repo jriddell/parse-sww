@@ -48,7 +48,6 @@ end
 parser.parse!
 =end
 
-#swwParser = ParseSww.new('/home/jr/src/parse-sww/SWW - web resources/')
-swwParser = ParseSww.new('/home/jr/src/parse-sww/simple/')
+swwParser = ParseSww.new('/home/jr/src/parse-sww/SWW - web resources/')
 swwParser.get_html_files
 swwParser.parse_html_files

@@ -113,6 +113,20 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('3(4-)', riverEntry.grade)
   end
 
+  # East 3 top doc Findhorn
+  def test_parse_html_file_docstart2
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/docstart2/')
+    parseSww.get_html_files()
+    assert_equal(["docstart2.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(4, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Findhorn', riverEntry.name)
+    assert_equal('Top', riverEntry.subName)
+    assert_equal('Jim Gibson', riverEntry.contributor)
+    assert_equal('3(4)', riverEntry.grade)
+  end
+
   # Broke it cos no header 3 and name had a dash in it
   def test_parse_html_file_break1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/break1/')
@@ -132,6 +146,25 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('5?', riverEntry.grade)
   end
 
+  # Some part of Muick breaks this
+  def test_parse_html_file_break2
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/break2/')
+    parseSww.get_html_files()
+    assert_equal(["break2.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(2, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Muick', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Bridget Thomas, Andy Jackson and Calum Peden', riverEntry.contributor)
+    assert_equal('3+(5)', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('Gairn', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Andy Jackson', riverEntry.contributor)
+    assert_equal('3/4', riverEntry.grade)
+  end
+
   # title in style <span xml:lang="en-US">Allt </span>a’<span xml:lang="en-US"> Chaorainn</span>
   def test_parse_html_file_title1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/title1/')
@@ -146,7 +179,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('4(5)', riverEntry.grade)
   end
 
-  # Testing the document from the opening <html> and stuff
+  # all of the north.html
   def test_parse_html_file_full1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/full1/')
     parseSww.get_html_files()
@@ -158,5 +191,47 @@ class ParseSwwTest < MiniTest::Test
     assert_nil(riverEntry.subName)
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3(4-)', riverEntry.grade)
+  end
+
+  # all of the west.html
+  def test_parse_html_file_full2
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/full2/')
+    parseSww.get_html_files()
+    assert_equal(["full2.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(109, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Allt Camgharaidh', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Andy Jackson and Kirsten Rendle', riverEntry.contributor)
+    assert_equal('4(5)', riverEntry.grade)
+  end
+
+  # all of the east.html
+  def test_parse_html_file_full3
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/full3/')
+    parseSww.get_html_files()
+    assert_equal(["full3.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(86, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Findhorn', riverEntry.name)
+    assert_equal('Top', riverEntry.subName)
+    assert_equal('Jim Gibson', riverEntry.contributor)
+    assert_equal('3(4)', riverEntry.grade)
+  end
+
+  # all of the south.html
+  def test_parse_html_file_full4
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/full4/')
+    parseSww.get_html_files()
+    assert_equal(["full4.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(62, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Avon', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Douglas Rae', riverEntry.contributor)
+    assert_equal('2/3', riverEntry.grade)
   end
 end

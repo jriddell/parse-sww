@@ -81,6 +81,10 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX Pesda-Heading-1"
       @parserState = ParserState::RiverName
     end
+    if name == 'a' and attributes[0].include?('Anchor-7')
+      puts "Special cast Findhorn header"
+      @parserState = ParserState::Nothing
+    end
     if name == 'p' and attributes[0].include?('Pesda-Heading-4') and not @currentRiverEntry.nil?
       @parserState = ParserState::RiverSubName
     end
@@ -92,7 +96,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX settings to quick ref contributors\n"
       @parserState = ParserState::PesdaQuickReferenceContributors unless @parserState == ParserState::Contributors
     end
-    if name == 'p' and (attributes[0].include?('Pesda-Heading-3') or attributes[0].include?('Pesda-Text-No-Indent'))
+    if name == 'p' and (attributes[0].include?('Pesda-Heading-3') or attributes[0].include?('Pesda-Text-No-Indent') or attributes[0].include?('Pesda-Text-No-Indent para-style-override-5'))
       if not @currentRiverEntry.nil? and not @currentRiverEntry.name.nil?
         @parserState = ParserState::RiverEntryText
       end
@@ -109,7 +113,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         # New section number means new river
         puts "QQQmatched a section number on #{string}"
         @currentRiverEntry = RiverEntry.new
-        @riverEntries << @currentRiverEntry if not @currentRiverEntry.nil?
+        @riverEntries << @currentRiverEntry
         sectionNumber = sectionNumberRegEx.match(string)
         @currentRiverEntry.sectionNumber = sectionNumber.to_s
       elsif riverNameRegEx.match?(string)
@@ -180,7 +184,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
        #puts "XXX in contributors state"
       @parserState = ParserState::Contributors
     end
-    if @parserState == ParserState::PesdaQuickReference and string == 'Grade'
+    if @parserState == ParserState::PesdaQuickReference and string.include?('Grade')
       #puts "state now grade"
       @parserState = ParserState::Grade
     end
@@ -232,6 +236,7 @@ class RiverEntry
 end
 
 module ParserState
+  Nothing = 0
   RiverName = 1
   RiverSubName = 2
   Contributors = 3
