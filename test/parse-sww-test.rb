@@ -9,7 +9,7 @@ class ParseSwwTest < MiniTest::Test
     parseSww.get_html_files()
     assert(parseSww.htmlFiles.include?("1 The North.html"))
   end
-    
+
   # a river section
   def test_parse_html_file_burn1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/burn1/')
@@ -132,19 +132,31 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('5?', riverEntry.grade)
   end
 
-=begin
+  # title in style <span xml:lang="en-US">Allt </span>a’<span xml:lang="en-US"> Chaorainn</span>
+  def test_parse_html_file_title1
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/title1/')
+    parseSww.get_html_files()
+    assert_equal(["title1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Allt a’ Chaorainn Mhòir', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Andy Jackson and Richard Bannister', riverEntry.contributor)
+    assert_equal('4(5)', riverEntry.grade)
+  end
+
   # Testing the document from the opening <html> and stuff
   def test_parse_html_file_full1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/full1/')
     parseSww.get_html_files()
     assert_equal(["full1.html"], parseSww.htmlFiles)
     parseSww.parse_html_files()
-    assert_equal(1, parseSww.riverEntries.length)
+    assert_equal(112, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
     assert_equal('Burn of Lunklet', riverEntry.name)
     assert_nil(riverEntry.subName)
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3(4-)', riverEntry.grade)
   end
-=end
 end

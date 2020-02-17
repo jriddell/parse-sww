@@ -104,7 +104,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::RiverName
       puts "STRING: " + string + "<<<"
       sectionNumberRegEx = /\d\d\d/
-      riverNameRegEx = /\w[-’\w ]+\w/
+      riverNameRegEx = /\w[-ò’\w ]+/
       if sectionNumberRegEx.match?(string)
         # New section number means new river
         puts "QQQmatched a section number on #{string}"
@@ -114,10 +114,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         @currentRiverEntry.sectionNumber = sectionNumber.to_s
       elsif riverNameRegEx.match?(string)
         riverName = riverNameRegEx.match(string)
+        puts "YYY ZZZ settings name to #{riverName.to_s}"
         if @currentRiverEntry.name.nil?
-          puts "YYY ZZZ settings name to #{riverName.to_s}"
-          @currentRiverEntry.name = riverName.to_s
+          @currentRiverEntry.name = ''
         end
+        @currentRiverEntry.name += ' ' + riverName.to_s
+        @currentRiverEntry.name.strip!
       end
     end
     if @parserState == ParserState::RiverSubName
