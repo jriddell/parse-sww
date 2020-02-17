@@ -81,10 +81,10 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX Pesda-Heading-1"
       @parserState = ParserState::RiverName
     end
-    if name == 'a' and attributes[0].include?('Anchor-7')
-      puts "Special cast Findhorn header"
-      @parserState = ParserState::Nothing
-    end
+    #if name == 'a' and attributes[0].include?('Anchor-7')
+    #  puts "Special cast Findhorn header"
+    #  @parserState = ParserState::Nothing
+    #end
     if name == 'p' and attributes[0].include?('Pesda-Heading-4') and not @currentRiverEntry.nil?
       @parserState = ParserState::RiverSubName
     end
@@ -118,7 +118,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         @currentRiverEntry.sectionNumber = sectionNumber.to_s
       elsif riverNameRegEx.match?(string)
         riverName = riverNameRegEx.match(string)
+        # Special case Findhorn which has a heading before the actual start of the river entry
         puts "YYY ZZZ settings name to #{riverName.to_s}"
+        if riverName.to_s == 'Findhorn' and @currentRiverEntry.nil?
+          @parserState = ParserState::Nothing
+          return
+        end
         if @currentRiverEntry.name.nil?
           @currentRiverEntry.name = ''
         end

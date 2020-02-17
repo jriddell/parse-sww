@@ -105,12 +105,17 @@ class ParseSwwTest < MiniTest::Test
     parseSww.get_html_files()
     assert_equal(["docstart1.html"], parseSww.htmlFiles)
     parseSww.parse_html_files()
-    assert_equal(1, parseSww.riverEntries.length)
+    assert_equal(2, parseSww.riverEntries.length)
     riverEntry = parseSww.riverEntries[0]
     assert_equal('Burn of Lunklet', riverEntry.name)
     assert_nil(riverEntry.subName)
     assert_equal('Chris Curry', riverEntry.contributor)
     assert_equal('3(4-)', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('Burn of Crookadale', riverEntry.name)
+    assert_nil(riverEntry.subName)
+    assert_equal('Chris Curry', riverEntry.contributor)
+    assert_equal('3/4', riverEntry.grade)
   end
 
   # East 3 top doc Findhorn
