@@ -30,6 +30,9 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('-1.3385', riverEntry.finishLatitude)
     puts "Testing for text: " + riverEntry.riverEntryText
     assert_equal("##Access\n\nDrive north from Lerw", riverEntry.riverEntryText[0..30])
+    # check the credit for the author and funds is added
+    riverEntryJson = parseSww.json(1)
+    assert_equal("s://www.andyjacksonfund.org.uk/", riverEntryJson[-40..-10])
   end
 
   # another river section
