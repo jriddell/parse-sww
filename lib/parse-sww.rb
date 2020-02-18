@@ -55,10 +55,10 @@ class ParseSww
     swwDoc.riverEntries
   end
 
-  def json
+  def json(entries)
     json = []
     @riverEntries.each {|riverEntry| json << riverEntry.to_h}
-    JSON.pretty_generate(json)
+    JSON.pretty_generate(json[0..entries])
   end
 
   def save_file
@@ -102,7 +102,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "XXX settings to quick ref contributors\n"
       @parserState = ParserState::PesdaQuickReferenceContributors unless @parserState == ParserState::Contributors
     end
-    if name == 'p' and (attributes[0].include?('Pesda-Heading-3') or attributes[0].include?('Pesda-Text-No-Indent') or attributes[0].include?('Pesda-Text-No-Indent para-style-override-5'))
+    if name == 'p' and attributes[0].include?('Pesda-Heading-3')
+      if not @currentRiverEntry.nil? and not @currentRiverEntry.name.nil?
+        @parserState = ParserState::RiverEntryTextHeader
+      end
+    end
+    if name == 'p' and (attributes[0].include?('Pesda-Text-No-Indent') or attributes[0].include?('Pesda-Text-No-Indent para-style-override-5'))
       if not @currentRiverEntry.nil? and not @currentRiverEntry.name.nil?
         @parserState = ParserState::RiverEntryText
       end
@@ -212,8 +217,19 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @parserState = ParserState::Finish
     end
     if @parserState == ParserState::RiverEntryText
+      puts "AAAfound text: " + string
       @currentRiverEntry.riverEntryText = '' if @currentRiverEntry.riverEntryText.nil?
       @currentRiverEntry.riverEntryText += string.strip + "\n"
+    end
+    # Add markdown header markers '##'
+    if @parserState == ParserState::RiverEntryTextHeader
+      puts "AAAfound header text: " + string
+      @currentRiverEntry.riverEntryText = '' if @currentRiverEntry.riverEntryText.nil?
+      if /\s+/ =~ string
+        @currentRiverEntry.riverEntryText += string.strip + "\n"
+      else
+        @currentRiverEntry.riverEntryText += '##' + string.strip + "\n"
+      end
     end
   end
 end
@@ -246,19 +262,19 @@ class RiverEntry
   end
 
   def to_h
+    @subName = "Main" if @subName.nil?
+    credit = "Section description by " + @contributor + ".\n\n"
+    credit += "##Credits\n\nText from SCA Scottish White Water Guidebook, copyright [Scottish Canoe Association](https://www.canoescotland.org/) and [The Andy Jackson Fund for Access](https://www.andyjacksonfund.org.uk/)."
     {sectionNumber: sectionNumber,
-     name: name,
-     subName: subName,
-     contributor: contributor,
+     "river name": name,
+     "section name": subName,
      grade: grade,
      length: length,
-     startGridRef: startGridRef,
      startLongitude: startLongitude,
      startLatitude: startLatitude,
-     finishGridRef: finishGridRef,
      finishLongitude: finishLongitude,
      finishLatitude: finishLatitude,
-     riverEntryText: riverEntryText
+     riverEntryText: riverEntryText + "\n\n" + credit
     }
   end
 end
@@ -275,4 +291,5 @@ module ParserState
   Finish = 8
   RiverEntryText = 9
   PesdaQuickReferenceContributors = 10
+  RiverEntryTextHeader = 11
 end

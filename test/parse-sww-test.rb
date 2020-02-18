@@ -29,7 +29,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('60.3005', riverEntry.finishLongitude)
     assert_equal('-1.3385', riverEntry.finishLatitude)
     puts "Testing for text: " + riverEntry.riverEntryText
-    assert_equal("Access\n\nDrive north from Lerwic", riverEntry.riverEntryText[0..30])
+    assert_equal("##Access\n\nDrive north from Lerw", riverEntry.riverEntryText[0..30])
   end
 
   # another river section
@@ -51,7 +51,7 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('60.2664', riverEntry.finishLongitude)
     assert_equal('-1.2119', riverEntry.finishLatitude)
     puts "Testing for text: " + riverEntry.riverEntryText
-    assert_equal("Access\n\nFrom the A970 driving n", riverEntry.riverEntryText[0..30])
+    assert_equal("##Access\n\nFrom the A970 driving", riverEntry.riverEntryText[0..30])
   end
 
   # multiple sections in 1 document
