@@ -143,7 +143,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::RiverName
       #puts "STRING: " + string + "<<<"
       sectionNumberRegEx = /\d\d\d/
-      riverNameRegEx = /\w[-ò’\w ]+/
+      riverNameRegEx = /\w[-òè’\w ]+/
       if sectionNumberRegEx.match?(string)
         # New section number means new river
         puts "QQQmatched a section number on #{string}"
@@ -213,7 +213,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "III start: " + string.strip
       @currentRiverEntry.startGridRef = '' if @currentRiverEntry.startGridRef.nil?
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
-      longLatRegEx = /\d\d\.\d\d\d\d?,? -?\d\.\d\d\d\d?/ # "60.2984, -1.3271"
+      longLatRegEx = /\d\d\.\d\d\d\d?\d?\d?,? -?\d\.\d\d\d\d?\d?\d?/ # "60.2984, -1.3271"
       @startLocation += string # hopefully something like "HU 373 573 (60.2984, -1.3271)"
       puts "EEE startLocation: " + @startLocation
       if gridRefRegEx.match?(@startLocation)
@@ -229,7 +229,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::Finish
       @currentRiverEntry.finishGridRef = '' if @currentRiverEntry.finishGridRef.nil?
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
-      longLatRegEx = /\d\d\.\d\d\d\d, -?\d\.\d\d\d\d/ # "60.2984, -1.3271"
+      longLatRegEx = /\d\d\.\d\d\d\d?\d?\d?,? -?\d\.\d\d\d\d?\d?\d?/ # "60.2984, -1.3271"
       finishLocation = string.strip # hopefully something like "HU 373 573 (60.2984, -1.3271)"
       puts "NNN finish: " + finishLocation
       if gridRefRegEx.match?(finishLocation)
@@ -261,7 +261,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @parserState = ParserState::Start
       @startLocation = ''
     end
-    if @parserState == ParserState::PesdaQuickReference and string =~ /Finish/
+    if @parserState == ParserState::PesdaQuickReference and (string =~ /Finish/ or string == 'Parking')
       puts "MMM state now finish"
       @parserState = ParserState::Finish
     end
