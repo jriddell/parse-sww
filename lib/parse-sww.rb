@@ -75,9 +75,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   attr_accessor :riverEntries
   @currentRiverEntry
   @parserState
+  # List of sections with no finish location, we set it to be same as start
+  @missingFinishLocation
 
   def initialize()
     super
+    @missingFinishLocation = ['290']
     @riverEntries = []
   end
 
@@ -235,6 +238,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         longLat = longLatRegEx.match(@startLocation).to_s
         @currentRiverEntry.startLongitude = longLat.split[0].sub(',','')
         @currentRiverEntry.startLatitude = longLat.split[1]
+      end
+      # These ones have no finish so set to be same as start
+      if @missingFinishLocation.include?(@currentRiverEntry.sectionNumber)
+        @currentRiverEntry.finishLongitude = @currentRiverEntry.startLongitude
+        @currentRiverEntry.finishLatitude = @currentRiverEntry.startLatitude
       end
     end
     if @parserState == ParserState::Finish
