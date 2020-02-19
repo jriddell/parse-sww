@@ -82,6 +82,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   def initialize()
     super
     @missingFinishLocation = ['290', '273', '300', '304', '202', '206', '018', '065', '067', '077']
+    @missingStartLocation = ['154']
     @missingLength = ['077']
     @riverEntries = []
   end
@@ -268,6 +269,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         longLat = longLatRegEx.match(finishLocation).to_s
         @currentRiverEntry.finishLongitude = longLat.split[0].sub(',','')
         @currentRiverEntry.finishLatitude = longLat.split[1].sub(',','.') # entry 278 has a typo and uses a , instead of .
+      end
+      # These ones have no start so set to be same as start
+      if @missingStartLocation.include?(@currentRiverEntry.sectionNumber)
+        @currentRiverEntry.startLongitude = @currentRiverEntry.finishLongitude
+        @currentRiverEntry.startLatitude = @currentRiverEntry.finishLatitude
       end
     end
     if @parserState == ParserState::PesdaQuickReference
