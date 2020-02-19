@@ -90,12 +90,29 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Brendan Emery', riverEntry.contributor)
     assert_equal('4/5', riverEntry.grade)
     puts riverEntry.riverEntryText
-    riverEntry.riverEntryText.include?('Burns Country')
+    included = riverEntry.riverEntryText.include?('Burns Country')
+    assert(!included)
     #assert(riverEntry.text.contains?
     riverEntry = parseSww.riverEntries[1]
     assert_equal('Doon', riverEntry.name)
     assert_equal('Neil Farmer and Alex Lumsden', riverEntry.contributor)
     assert_equal('3', riverEntry.grade)
+  end
+
+  # test what happens at the end of the book where we get appendixes
+  def test_parse_html_file_appendix
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/appendix/')
+    parseSww.get_html_files()
+    assert_equal(["appendix.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Hermitage Water', riverEntry.name)
+    assert_equal('Mark Watson and Corey Watson', riverEntry.contributor)
+    assert_equal('3/3+', riverEntry.grade)
+    puts riverEntry.riverEntryText
+    included = riverEntry.riverEntryText.include?('River and place names in Scotland')
+    assert(!included)
   end
 
   # multiple sections in 1 document

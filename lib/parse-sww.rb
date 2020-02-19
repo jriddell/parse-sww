@@ -83,6 +83,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
 
   def start_element(name, attributes = [])
     puts "found a #{name} atts #{attributes}"
+    # end of the book, ignore from now on
+    if @parserState == ParserState::Appendix
+      puts "start_element ParserState::Appendix returning"
+      return
+    end
     # Start of a new river
     if name == 'p' and attributes[0].include?('Pesda-Heading-1')
       puts "XXX Pesda-Heading-1"
@@ -126,11 +131,17 @@ class SwwDoc < Nokogiri::XML::SAX::Document
 
   def characters(string)
     #puts "#{string}"
-    if @parserState == ParserState::Nothing
+    if @parserState == ParserState::Nothing or @parserState == ParserState::Appendix
+      return
+    end
+    # Appendix at the end of the book so ignore the rest
+    if string == 'Appendices'
+      puts "AAAA Appendices"
+      @parserState = ParserState::Appendix
       return
     end
     if @parserState == ParserState::RiverName
-      puts "STRING: " + string + "<<<"
+      #puts "STRING: " + string + "<<<"
       sectionNumberRegEx = /\d\d\d/
       riverNameRegEx = /\w[-ò’\w ]+/
       if sectionNumberRegEx.match?(string)
@@ -310,4 +321,5 @@ module ParserState
   RiverEntryText = 9
   PesdaQuickReferenceContributors = 10
   RiverEntryTextHeader = 11
+  Appendix = 12
 end
