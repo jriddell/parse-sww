@@ -179,6 +179,13 @@ class SwwDoc < Nokogiri::XML::SAX::Document
           @parserState = ParserState::Nothing
           return
         end
+        # Tweed is special case cos it has no location
+        if (riverName.to_s =~ /Tweed/)
+          @currentRiverEntry.startLongitude = '55.5838'
+          @currentRiverEntry.startLatitude = '-2.8605'
+          @currentRiverEntry.finishLongitude = '55.7226'
+          @currentRiverEntry.finishLatitude = '-2.1633'
+        end
         if @currentRiverEntry.name.nil?
           @currentRiverEntry.name = ''
         end
