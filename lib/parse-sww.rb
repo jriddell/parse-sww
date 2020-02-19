@@ -213,9 +213,8 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "III start: " + string.strip
       @currentRiverEntry.startGridRef = '' if @currentRiverEntry.startGridRef.nil?
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
-      longLatRegEx = /\d\d\.\d\d\d\d, -?\d\.\d\d\d\d/ # "60.2984, -1.3271"
+      longLatRegEx = /\d\d\.\d\d\d\d?,? -?\d\.\d\d\d\d?/ # "60.2984, -1.3271"
       @startLocation += string # hopefully something like "HU 373 573 (60.2984, -1.3271)"
-      @startLocation = @startLocation
       puts "EEE startLocation: " + @startLocation
       if gridRefRegEx.match?(@startLocation)
         @currentRiverEntry.startGridRef = gridRefRegEx.match(@startLocation).to_s
