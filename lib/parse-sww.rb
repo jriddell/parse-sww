@@ -256,7 +256,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       #puts "state now length"
       @parserState = ParserState::Length
     end
-    if @parserState == ParserState::PesdaQuickReference and (string == 'Start' or string == 'Location')
+    if @parserState == ParserState::PesdaQuickReference and (string =~ /Start/ or string == 'Location')
       puts "state now start"
       @parserState = ParserState::Start
       @startLocation = ''

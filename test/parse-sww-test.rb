@@ -201,6 +201,23 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('-4.2337', riverEntry.finishLatitude)
   end
 
+  # not parsing locations
+  def test_parse_html_file_location4
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/location4/')
+    parseSww.get_html_files()
+    assert_equal(["location4.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Markie', riverEntry.name)
+    assert_equal('Richard Bannister', riverEntry.contributor)
+    assert_equal('3+', riverEntry.grade)
+    assert_equal('57.0265', riverEntry.startLongitude)
+    assert_equal('-4.3459', riverEntry.startLatitude)
+    assert_equal('57.0133', riverEntry.finishLongitude)
+    assert_equal('-4.3383', riverEntry.finishLatitude)
+  end
+
   # multiple sections in 1 document
   def test_parse_html_file_multirivers1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/multirivers1/')
