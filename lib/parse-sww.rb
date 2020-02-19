@@ -210,16 +210,19 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @currentRiverEntry.length += string.strip
     end
     if @parserState == ParserState::Start
+      puts "III start: " + string.strip
       @currentRiverEntry.startGridRef = '' if @currentRiverEntry.startGridRef.nil?
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
       longLatRegEx = /\d\d\.\d\d\d\d, -?\d\.\d\d\d\d/ # "60.2984, -1.3271"
-      startLocation = string.strip # hopefully something like "HU 373 573 (60.2984, -1.3271)"
-      puts "EEE startLocation: " + startLocation
-      if gridRefRegEx.match?(startLocation)
-        @currentRiverEntry.startGridRef = gridRefRegEx.match(startLocation).to_s
+      @startLocation += string # hopefully something like "HU 373 573 (60.2984, -1.3271)"
+      @startLocation = @startLocation
+      puts "EEE startLocation: " + @startLocation
+      if gridRefRegEx.match?(@startLocation)
+        @currentRiverEntry.startGridRef = gridRefRegEx.match(@startLocation).to_s
       end
-      if longLatRegEx.match?(startLocation)
-        longLat = longLatRegEx.match(startLocation).to_s
+      if longLatRegEx.match?(@startLocation)
+        puts "OOO found a matching startLocation" + @startLocation
+        longLat = longLatRegEx.match(@startLocation).to_s
         @currentRiverEntry.startLongitude = longLat.split[0].sub(',','')
         @currentRiverEntry.startLatitude = longLat.split[1]
       end
@@ -256,6 +259,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::PesdaQuickReference and (string == 'Start' or string == 'Location')
       #puts "state now start"
       @parserState = ParserState::Start
+      @startLocation = ''
     end
     if @parserState == ParserState::PesdaQuickReference and string == 'Finish'
       #puts "state now finish"
@@ -311,8 +315,8 @@ class RiverEntry
     credit = "Section description by " + @contributor + ".\n\n"
     credit += "##Credits\n\nText from SCA Scottish White Water Guidebook, copyright [Scottish Canoe Association](https://www.canoescotland.org/) and [The Andy Jackson Fund for Access](https://www.andyjacksonfund.org.uk/)."
     {sectionNumber: sectionNumber,
-     "river name": name,
-     "section name": subName,
+     "riverName": name,
+     "sectionName": subName,
      grade: grade,
      length: length,
      startLongitude: startLongitude,
