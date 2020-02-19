@@ -229,7 +229,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
     if @parserState == ParserState::Finish
       @currentRiverEntry.finishGridRef = '' if @currentRiverEntry.finishGridRef.nil?
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
-      longLatRegEx = /\d\d\.\d\d\d\d?\d?\d?,? -?\d\.\d\d\d\d?\d?\d?/ # "60.2984, -1.3271"
+      longLatRegEx = /\d\d\.\d\d\d\d?\d?\d?,? -?\d[\.,]\d\d\d\d?\d?\d?/ # "60.2984, -1.3271"
       finishLocation = string.strip # hopefully something like "HU 373 573 (60.2984, -1.3271)"
       puts "NNN finish: " + finishLocation
       if gridRefRegEx.match?(finishLocation)
@@ -238,7 +238,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       if longLatRegEx.match?(finishLocation)
         longLat = longLatRegEx.match(finishLocation).to_s
         @currentRiverEntry.finishLongitude = longLat.split[0].sub(',','')
-        @currentRiverEntry.finishLatitude = longLat.split[1]
+        @currentRiverEntry.finishLatitude = longLat.split[1].sub(',','.') # entry 278 has a typo and uses a , instead of .
       end
     end
     if @parserState == ParserState::PesdaQuickReference
