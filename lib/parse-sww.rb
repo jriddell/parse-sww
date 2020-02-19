@@ -169,6 +169,16 @@ class SwwDoc < Nokogiri::XML::SAX::Document
           @parserState = ParserState::Nothing
           return
         end
+        # Etive also has a preamble
+        if (riverName.to_s =~ /Etive/) and (@currentRiverEntry.sectionNumber == '161')
+          @parserState = ParserState::Nothing
+          return
+        end
+        # Roy also has a preamble
+        if (riverName.to_s =~ /Roy/) and (@currentRiverEntry.sectionNumber == '145')
+          @parserState = ParserState::Nothing
+          return
+        end
         if @currentRiverEntry.name.nil?
           @currentRiverEntry.name = ''
         end
