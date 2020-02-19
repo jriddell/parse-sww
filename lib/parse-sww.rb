@@ -159,8 +159,8 @@ class SwwDoc < Nokogiri::XML::SAX::Document
           @parserState = ParserState::Nothing
           return
         end
-        # North esk also has a preamble so if we're still on Don section then skip it
-        if (riverName.to_s == 'North Esk') and @currentRiverEntry.sectionNumber == '243'
+        # Both North Esks also have a preamble so if we're still on Don or Almond section then skip it
+        if (riverName.to_s =~ /North Esk/) and (@currentRiverEntry.sectionNumber == '243' or @currentRiverEntry.sectionNumber == '265')
           @parserState = ParserState::Nothing
           return
         end
