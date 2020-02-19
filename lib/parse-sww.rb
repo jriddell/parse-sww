@@ -223,7 +223,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       puts "III start: " + string.strip
       @currentRiverEntry.startGridRef = '' if @currentRiverEntry.startGridRef.nil?
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
-      longLatRegEx = /\d\d\.\d\d\d\d?\d?\d?,? -?\d\.\d\d\d\d?\d?\d?/ # "60.2984, -1.3271"
+      longLatRegEx = /\d\d\.\d\d\d\d?\d?\d?,? -?\d[\.,]\d\d\d\d?\d?\d?/ # "60.2984, -1.3271"
       @startLocation += string # hopefully something like "HU 373 573 (60.2984, -1.3271)"
       # special case Lugar Water which has missing space
       if @currentRiverEntry.name == 'Lugar Water'
@@ -237,7 +237,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         puts "OOO found a matching startLocation" + @startLocation
         longLat = longLatRegEx.match(@startLocation).to_s
         @currentRiverEntry.startLongitude = longLat.split[0].sub(',','')
-        @currentRiverEntry.startLatitude = longLat.split[1]
+        @currentRiverEntry.startLatitude = longLat.split[1].sub(',','.') # entry 249 has a typo and uses a , instead of .
       end
       # These ones have no finish so set to be same as start
       if @missingFinishLocation.include?(@currentRiverEntry.sectionNumber)
