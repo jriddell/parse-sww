@@ -82,7 +82,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   def initialize()
     super
     @missingFinishLocation = ['290', '273', '300', '304', '202', '206', '018', '065', '067', '077']
-    @missingStartLocation = ['154']
+    @missingStartLocation = ['154', '158']
     @missingLength = ['077']
     @riverEntries = []
   end
