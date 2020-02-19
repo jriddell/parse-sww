@@ -57,6 +57,47 @@ class ParseSwwTest < MiniTest::Test
     assert_equal("##Access\n\nFrom the A970 driving", riverEntry.riverEntryText[0..30])
   end
 
+  # north esk also has a preable which we need to special case to ignore
+  def test_parse_html_file_northesk1
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/northesk1/')
+    parseSww.get_html_files()
+    assert_equal(["northesk1.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(6, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Don', riverEntry.name)
+    assert_equal('Calum Peden', riverEntry.contributor)
+    assert_equal('2/3+', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('North Esk', riverEntry.name)
+    assert_equal('Mark Sherriff', riverEntry.contributor)
+    assert_equal('4/4+', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[2]
+    assert_equal('North Esk', riverEntry.name)
+    assert_equal('Mark Sherriff', riverEntry.contributor)
+    assert_equal('2(3+)', riverEntry.grade)
+  end
+
+  # north sannox is followed by the next section, we need to tell is when to stop
+  def test_parse_html_file_northsannox
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/northsannox/')
+    parseSww.get_html_files()
+    assert_equal(["northsannox.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(2, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('North Sannox Burn', riverEntry.name)
+    assert_equal('Brendan Emery', riverEntry.contributor)
+    assert_equal('4/5', riverEntry.grade)
+    puts riverEntry.riverEntryText
+    riverEntry.riverEntryText.include?('Burns Country')
+    #assert(riverEntry.text.contains?
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('Doon', riverEntry.name)
+    assert_equal('Neil Farmer and Alex Lumsden', riverEntry.contributor)
+    assert_equal('3', riverEntry.grade)
+  end
+
   # multiple sections in 1 document
   def test_parse_html_file_multirivers1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/multirivers1/')

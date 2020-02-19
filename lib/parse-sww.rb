@@ -37,6 +37,7 @@ class ParseSww
   def get_html_files
     Dir.chdir(@htmlDirectory)
     @htmlFiles = Dir.glob('*.html')
+    @htmlFiles.delete("Example pages 1.html")
     puts "#{@htmlFiles}"
   end
   
@@ -112,10 +113,22 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         @parserState = ParserState::RiverEntryText
       end
     end
+    if name == 'p' and attributes[0].include?('Contents-Heading-Section')
+      # we found a section listing, ignore
+      @parserState = ParserState::Nothing
+      @currentRiverEntry = nil
+    end
+    if name == 'p' and attributes[0].include?('Pesda-Caption')
+      # found a photo, ignore
+      @parserState = ParserState::Nothing
+    end
   end
 
   def characters(string)
     #puts "#{string}"
+    if @parserState == ParserState::Nothing
+      return
+    end
     if @parserState == ParserState::RiverName
       puts "STRING: " + string + "<<<"
       sectionNumberRegEx = /\d\d\d/
@@ -131,7 +144,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         riverName = riverNameRegEx.match(string)
         # Special case Findhorn which has a heading before the actual start of the river entry
         puts "YYY ZZZ settings name to #{riverName.to_s}"
-        if riverName.to_s == 'Findhorn' and @currentRiverEntry.nil?
+        if (riverName.to_s == 'Findhorn') and @currentRiverEntry.nil?
+          @parserState = ParserState::Nothing
+          return
+        end
+        # North esk also has a preamble so if we're still on Don section then skip it
+        if (riverName.to_s == 'North Esk') and @currentRiverEntry.sectionNumber == '243'
           @parserState = ParserState::Nothing
           return
         end
