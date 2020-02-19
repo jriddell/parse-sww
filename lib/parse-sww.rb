@@ -77,10 +77,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
   @parserState
   # List of sections with no finish location, we set it to be same as start
   @missingFinishLocation
+  @missingLength
 
   def initialize()
     super
-    @missingFinishLocation = ['290', '273', '300', '304', '202', '206']
+    @missingFinishLocation = ['290', '273', '300', '304', '202', '206', '018', '065', '067', '077']
+    @missingLength = ['077']
     @riverEntries = []
   end
 
@@ -154,6 +156,9 @@ class SwwDoc < Nokogiri::XML::SAX::Document
         @riverEntries << @currentRiverEntry
         sectionNumber = sectionNumberRegEx.match(string)
         @currentRiverEntry.sectionNumber = sectionNumber.to_s
+        if @missingLength.include?(@currentRiverEntry.sectionNumber)
+          @currentRiverEntry.length = '0'
+        end
       elsif riverNameRegEx.match?(string)
         riverName = riverNameRegEx.match(string)
         # Special case Findhorn which has a heading before the actual start of the river entry

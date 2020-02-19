@@ -287,6 +287,19 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('-3.1504', riverEntry.finishLatitude)
   end
 
+  # start location is a , instead of .
+  def test_parse_html_file_missingdata3
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/missingdata3/')
+    parseSww.get_html_files()
+    assert_equal(["missingdata3.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(1, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Loch Seaforth Rapids', riverEntry.name)
+    assert_equal('Sean Ziehm-Stephen', riverEntry.contributor)
+    assert_equal('0', riverEntry.length)
+  end
+
   # multiple sections in 1 document
   def test_parse_html_file_multirivers1
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/multirivers1/')
