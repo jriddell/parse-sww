@@ -232,6 +232,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       gridRefRegEx = /\w\w \d\d\d \d\d\d/ # "HU 373 573"
       longLatRegEx = /\d\d\.\d\d\d\d, -?\d\.\d\d\d\d/ # "60.2984, -1.3271"
       finishLocation = string.strip # hopefully something like "HU 373 573 (60.2984, -1.3271)"
+      puts "NNN finish: " + finishLocation
       if gridRefRegEx.match?(finishLocation)
         @currentRiverEntry.finishGridRef = gridRefRegEx.match(finishLocation).to_s
       end
@@ -257,12 +258,12 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       @parserState = ParserState::Length
     end
     if @parserState == ParserState::PesdaQuickReference and (string == 'Start' or string == 'Location')
-      #puts "state now start"
+      puts "state now start"
       @parserState = ParserState::Start
       @startLocation = ''
     end
-    if @parserState == ParserState::PesdaQuickReference and string == 'Finish'
-      #puts "state now finish"
+    if @parserState == ParserState::PesdaQuickReference and string =~ /Finish/
+      puts "MMM state now finish"
       @parserState = ParserState::Finish
     end
     if @parserState == ParserState::RiverEntryText

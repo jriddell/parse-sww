@@ -164,6 +164,8 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('4', riverEntry.grade)
     assert_equal('55.1039', riverEntry.startLongitude)
     assert_equal('-4.1077', riverEntry.startLatitude)
+    assert_equal('55.0893', riverEntry.finishLongitude)
+    assert_equal('-4.1333', riverEntry.finishLatitude)
     riverEntry = parseSww.riverEntries[1]
     assert_equal('Black Water', riverEntry.name)
     assert_equal('Jay Sigbrandt and Alex Lumsden', riverEntry.contributor)
