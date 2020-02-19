@@ -263,7 +263,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       #puts "state now grade"
       @parserState = ParserState::Grade
     end
-    if @parserState == ParserState::PesdaQuickReference and string == 'Length'
+    if @parserState == ParserState::PesdaQuickReference and string =~ /Length/
       #puts "state now length"
       @parserState = ParserState::Length
     end
