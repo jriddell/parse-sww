@@ -78,6 +78,27 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('2(3+)', riverEntry.grade)
   end
 
+  # north esk broken here too?
+  def test_parse_html_file_northesk2
+    parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/northesk2/')
+    parseSww.get_html_files()
+    assert_equal(["northesk2.html"], parseSww.htmlFiles)
+    parseSww.parse_html_files()
+    assert_equal(4, parseSww.riverEntries.length)
+    riverEntry = parseSww.riverEntries[0]
+    assert_equal('Almond', riverEntry.name)
+    assert_equal('Calum Peden', riverEntry.contributor)
+    assert_equal('2/3+', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[1]
+    assert_equal('North Esk', riverEntry.name)
+    assert_equal('Mark Sherriff', riverEntry.contributor)
+    assert_equal('4/4+', riverEntry.grade)
+    riverEntry = parseSww.riverEntries[2]
+    assert_equal('North Esk', riverEntry.name)
+    assert_equal('Mark Sherriff', riverEntry.contributor)
+    assert_equal('2(3+)', riverEntry.grade)
+  end
+
   # north sannox is followed by the next section, we need to tell is when to stop
   def test_parse_html_file_northsannox
     parseSww = ParseSww.new('/home/jr/src/parse-sww/parse-sww/test/data/northsannox/')
