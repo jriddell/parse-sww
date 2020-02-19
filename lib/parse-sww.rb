@@ -80,7 +80,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
 
   def initialize()
     super
-    @missingFinishLocation = ['290']
+    @missingFinishLocation = ['290', '273', '300', '304', '202', '206']
     @riverEntries = []
   end
 
@@ -243,6 +243,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       if @missingFinishLocation.include?(@currentRiverEntry.sectionNumber)
         @currentRiverEntry.finishLongitude = @currentRiverEntry.startLongitude
         @currentRiverEntry.finishLatitude = @currentRiverEntry.startLatitude
+      end
+      # Special case first Keltney Burn which does not parse Finish
+      if @currentRiverEntry.startLongitude == '56.6437'
+        @currentRiverEntry.finishLongitude = '56.6450'
+        @currentRiverEntry.finishLatitude = '-4.0136'
       end
     end
     if @parserState == ParserState::Finish
