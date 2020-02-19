@@ -164,6 +164,11 @@ class SwwDoc < Nokogiri::XML::SAX::Document
           @parserState = ParserState::Nothing
           return
         end
+        # Spean also has a preamble
+        if (riverName.to_s =~ /Spean/) and (@currentRiverEntry.sectionNumber == '143')
+          @parserState = ParserState::Nothing
+          return
+        end
         if @currentRiverEntry.name.nil?
           @currentRiverEntry.name = ''
         end
