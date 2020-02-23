@@ -37,6 +37,7 @@ class ParseSww
   def get_html_files
     Dir.chdir(@htmlDirectory)
     @htmlFiles = Dir.glob('*.html')
+    @htmlFiles.sort!
     @htmlFiles.delete("Example pages 1.html")
     puts "#{@htmlFiles}"
   end
@@ -81,9 +82,9 @@ class SwwDoc < Nokogiri::XML::SAX::Document
 
   def initialize()
     super
-    @missingFinishLocation = ['290', '273', '300', '304', '202', '206', '018', '065', '067', '077']
-    @missingStartLocation = ['154', '158']
-    @missingLength = ['077']
+    @missingFinishLocation = ['290', '273', '300', '304', '202', '206', '018', '065', '067', '077', '166', '167', '174']
+    @missingStartLocation = ['154', '158', '155']
+    @missingLength = ['077', '174']
     @riverEntries = []
   end
 
@@ -312,7 +313,7 @@ class SwwDoc < Nokogiri::XML::SAX::Document
       if /\s+/ =~ string
         @currentRiverEntry.riverEntryText += string.strip + "\n"
       else
-        @currentRiverEntry.riverEntryText += '##' + string.strip + "\n"
+        @currentRiverEntry.riverEntryText += '## ' + string.strip + "\n"
       end
     end
   end
@@ -332,6 +333,44 @@ class RiverEntry
   attr_accessor :finishLongitude
   attr_accessor :finishLatitude
   attr_accessor :riverEntryText
+  attr_accessor :sepaGaugeLocationCode
+  attr_accessor :gaugeScrapeValue
+  attr_accessor :gaugeLowValue
+  attr_accessor :gaugeMediumValue
+  attr_accessor :gaugeHighValue
+  attr_accessor :gaugeVHighValue
+  attr_accessor :gaugeHugeValue
+  attr_reader   :wtwData
+
+  def wtwData
+    return @wtwData if not @wtwData.nil?
+    riverSectionsFile = File.read('/home/jr/src/parse-sww/parse-sww/river-sections.json', mode: 'rb')
+    @wtwData = JSON.parse(riverSectionsFile)
+  end
+
+  # Reads in river-sections.json and adds gauge code and calibrations
+  def addWtWData
+    @sepaGaugeLocationCode = ''
+    @gaugeScrapeValue = ''
+    @gaugeLowValue = ''
+    @gaugeMediumValue = ''
+    @gaugeHighValue = ''
+    @gaugeVHighValue = ''
+    @gaugeHugeValue = ''
+    wtwData.each do |section|
+      scaGuidebookNo = section['sca_guidebook_no'].rjust(3, "0") # add leadins 0
+      if scaGuidebookNo == sectionNumber
+        @sepaGaugeLocationCode = section['gauge_location_code']
+        @gaugeScrapeValue = section['scrape_value']
+        @gaugeLowValue = section['low_value']
+        @gaugeMediumValue = section['medium_value']
+        @gaugeHighValue = section['high_value']
+        @gaugeVHighValue = section['very_high_value']
+        @gaugeHugeValue = section['huge_value']
+        break
+      end
+    end
+  end
 
   def to_str
     string = "RIVER: #{sectionNumber} #{name}\n"
@@ -346,6 +385,7 @@ class RiverEntry
   end
 
   def to_h
+    addWtWData
     @subName = "Main" if @subName.nil?
     credit = "Section description by " + @contributor + ".\n\n"
     credit += "##Credits\n\nText from SCA Scottish White Water Guidebook, copyright [Scottish Canoe Association](https://www.canoescotland.org/) and [The Andy Jackson Fund for Access](https://www.andyjacksonfund.org.uk/)."
@@ -358,6 +398,13 @@ class RiverEntry
      startLatitude: startLatitude,
      finishLongitude: finishLongitude,
      finishLatitude: finishLatitude,
+     sepaGaugeLocationCode: sepaGaugeLocationCode,
+     gaugeScrapeValue: gaugeScrapeValue,
+     gaugeLowValue: gaugeLowValue,
+     gaugeMediumValue: gaugeMediumValue,
+     gaugeHighValue: gaugeHighValue,
+     gaugeVHighValue: gaugeVHighValue,
+     gaugeHugeValue: gaugeHugeValue,
      riverEntryText: riverEntryText + "\n\n" + credit
     }
   end

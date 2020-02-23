@@ -485,4 +485,12 @@ class ParseSwwTest < MiniTest::Test
     assert_equal('Douglas Rae', riverEntry.contributor)
     assert_equal('2/3', riverEntry.grade)
   end
+
+  def test_river_entry_wtw1
+    riverEntry = RiverEntry.new
+    riverEntry.sectionNumber = "90"
+    riverEntry.addWtWData
+    assert_equal('234262', riverEntry.sepaGaugeLocationCode)
+    assert_equal('0.4', riverEntry.gaugeScrapeValue)
+  end
 end
